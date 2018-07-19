@@ -1,0 +1,44 @@
+{
+  "name": "smart-pills",
+  "version": "1.0.0",
+  "description": "smart-pills project",
+  "private": false,
+  "main": "index.js",
+  "dependencies": {
+    "ajv": "^6.0.0",
+    "@types/googlemaps": "^3.30.8",
+    "@types/markerclustererplus": "^2.1.33",
+    "chartist": "^0.10.1",
+    "classnames": "^2.2.5",
+    "material-ui": "1.0.0-beta.34",
+    "material-ui-icons": "1.0.0-beta.17",
+    "npm-run-all": "^4.1.1",
+    "perfect-scrollbar": "^1.3.0",
+    "react": "^16.2.0",
+    "react-chartist": "^0.13.1",
+    "react-dom": "^16.2.0",
+    "react-google-maps": "^9.4.5",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "^1.1.4",
+    "react-swipeable-views": "^0.12.12"
+  },
+  "scripts": {
+    "start": "NODE_PATH=./src react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mario1994/Smart-Pills.git"
+  },
+  "author": "Mario Boban",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mario1994/Smart-Pills/issues"
+  },
+  "homepage": "https://github.com/mario1994/Smart-Pills#readme",
+  "devDependencies": {
+    "webpack": "^3.11.0"
+  }
+}
