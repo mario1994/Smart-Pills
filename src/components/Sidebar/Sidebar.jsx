@@ -20,11 +20,11 @@ const Sidebar = ({ ...props }) => {
   function activeRoute(routeName) {
     return props.location.pathname.indexOf(routeName) > -1 ? true : false;
   }
-  const { classes, color, logo, image, logoText, routes } = props;
+  const { classes, color, logo, image, logoText, sidebarItems,signOutUser } = props;
   var links = (
     <List className={classes.list}>
-      {routes.map((prop, key) => {
-        if (prop.redirect) return null;
+      {sidebarItems.map((prop, key) => {
+        if(prop.type == "navigation"){
         const listItemClasses = cx({
           [" " + classes[color]]: activeRoute(prop.path)
         });
@@ -33,7 +33,7 @@ const Sidebar = ({ ...props }) => {
         });
         return (
           <NavLink
-            to={prop.path}
+            to={prop.route.path}
             className={classes.item}
             activeClassName="active"
             key={key}
@@ -50,6 +50,19 @@ const Sidebar = ({ ...props }) => {
             </ListItem>
           </NavLink>
         );
+      }else{
+        return (
+          <ListItem>
+            <button
+            className = "f6 link dim ph3 pv2 mb2 dib white bg-near-black center"
+            onClick={props.signOutUser}
+            value="Sign out"
+            >
+            Sign Off
+            </button>
+          </ListItem>
+          );
+      }
       })}
     </List>
   );

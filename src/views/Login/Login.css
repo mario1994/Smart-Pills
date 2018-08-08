@@ -1,0 +1,4 @@
+.simple-form input[type=email]:required:valid {
+  background: url("https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Green_check.svg/1024px-Green_check.svg.png") no-repeat 95% 50%;
+  background-size: 25px;
+}

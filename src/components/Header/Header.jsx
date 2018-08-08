@@ -15,14 +15,7 @@ import headerStyle from "variables/styles/headerStyle.jsx";
 
 function Header({ ...props }) {
   function makeBrand() {
-    var name;
-    props.routes.map((prop, key) => {
-      if (prop.path === props.location.pathname) {
-        name = "Smart pills";
-      }
-      return null;
-    });
-    return name;
+    return "Smart Pills";
   }
   const { classes, color } = props;
   const appBarClasses = cx({

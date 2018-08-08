@@ -30,8 +30,8 @@ import {
 import dashboardStyle from "variables/styles/dashboardStyle";
 
 class Dashboard extends Component {
-  constructor() {
-    super();
+  constructor(props){
+    super(props);
     this.state = {
     value: 0,
     pillTime: "3:00 PM",
@@ -40,7 +40,6 @@ class Dashboard extends Component {
     };
   }
   componentDidMount() {
-    console.log("gg wp");
     fetch('http://localhost:3100')
       .then(response => {
         if (response.ok) {
@@ -62,6 +61,8 @@ class Dashboard extends Component {
     this.setState({ value: index });
   };
   render() {
+    const { user } = this.props;
+    console.log(this.props.user);
     return (
       <div>
         <Grid container>

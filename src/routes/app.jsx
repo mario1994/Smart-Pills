@@ -8,22 +8,17 @@ import {
   Person
 } from "material-ui-icons";
 
-const appRoutes = [
-  {
+export const appRoutes = {
+  dashboard: {
     path: "/dashboard",
-    sidebarName: "Dashboard",
-    navbarName: "Smart Pills Dashboard",
-    icon: Dashboard,
-    component: DashboardPage
+    component: DashboardPage,
   },
-  {
+  user: {
     path: "/user",
-    sidebarName: "User Profile",
-    navbarName: "Profile",
-    icon: Person,
-    component: UserProfile
-  },
+    component: UserProfile,
+  }
+};
+
+export const redirects = [
   { redirect: true, path: "/", to: "/dashboard", navbarName: "Redirect" }
 ];
-
-export default appRoutes;
