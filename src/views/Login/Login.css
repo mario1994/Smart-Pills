@@ -1,4 +1,6 @@
-.simple-form input[type=email]:required:valid {
-  background: url("https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Green_check.svg/1024px-Green_check.svg.png") no-repeat 95% 50%;
-  background-size: 25px;
+body {
+  margin: 0;
+  padding: 0;
+  background: url("https://ak3.picdn.net/shutterstock/videos/13323653/thumb/1.jpg");
+  background-size:cover
 }

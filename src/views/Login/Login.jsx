@@ -1,5 +1,14 @@
 import React, { Component }  from "react";
+import Alert from 'react-s-alert';
+
+import {
+  Button,
+} from "components";
+
+import {TextField} from "material-ui";
 import './Login.css';
+
+
 class Login extends Component {
 	constructor(props){
 		super(props);
@@ -29,6 +38,7 @@ class Login extends Component {
 		const {emailIsValid,passwordIsValid} = this.state;
 		if(emailIsValid && passwordIsValid){
 			fetch('http://localhost:3100/signin',{
+				credentials: "same-origin",
 				method: 'post',
 				headers: {'Content-Type':'application/json'},
 				body: JSON.stringify({
@@ -36,14 +46,23 @@ class Login extends Component {
 					password:this.state.signInPassword
 				})
 			})
-				.then(response => response.json())
+				.then(response => {
+					console.log(response.headers.get('set-cookie'));
+					return response.json()
+				})
+
 	    		.then(user => {
 	       		if(user.id){
 	          		this.props.loadUser(user);
 	       		 }
 	      })
 	    }else{
-	    	alert("Pleae stop!");
+	    	Alert.error('email or password not entered', {
+            position: 'top-right',
+            effect:"jelly",
+            timeout: 2000,
+            offset: 100
+        });
 	    }
 	}
 
@@ -56,40 +75,40 @@ class Login extends Component {
 		    <fieldset id="sign_up" className="ba b--transparent ph0 mh0 tc">
 		      <legend className="f1 fw6 ph0 mh0">Sign In</legend>
 		      <div className="mt3">
-		        <label className="db fw6 lh-copy f4 black" htmlFor="email-address">Email</label>
-		        <input 
-		        className="pa2 input-reset ba bg-transparent hover-bg-white hover-black w-100"
+		      <label className="db fw6 lh-copy f5 black">Email</label>
+		        <TextField
 		        type="email" 
 		        name="email-address"  
 		        id="email-address"
-		        required
 		        onChange = {this.onEmailChange}
 		        />
 		      </div>
-		      <div className="mv3">
-		        <label className="db fw6 lh-copy f4 black" htmlFor="password">Password</label>
-		        <input 
-		        className="pa2 input-reset ba bg-transparent hover-bg-white hover-black w-100"
-		        type="password" 
-		        name="password"  
+		      <div className="mt3">
+		      <label className="db fw6 lh-copy f5 black">Password</label>
+		        <TextField 
+		        type="password"   
 		        id="password"
-		        required
 		        onChange = {this.onPasswordChange}
 		        />
 		      </div>
 		    </fieldset>
-		    <div className="">
-		      <input
+		    <div className="mt3">
+		      <Button
 		      onClick={this.onSubmitSignIn}
-		      className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f4 dib"
+		      className="b--black bg-transparent grow pointer f4 "
+		      color= "primary"
 		      type="submit"
-		      value="Sign in"/>
+		      value="Sign in">
+		      Sign In
+		      </Button>
 		    </div>
-		    <div className="lh-copy mt3">
-		      <p 
+		    <div className="mt3">
+		      <Button 
 		      onClick={() => onRouteChange('register')}
-		      href="#0" 
-		      className="f4 link dim black db">Register</p>
+		      className="f4 bg-transparent grow pointer b--black"
+		      color="primary">
+		      Register
+		      </Button>
 		    </div>
 		  </div>
 		</main>

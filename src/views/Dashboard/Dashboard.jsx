@@ -27,6 +27,10 @@ import {
   bottleTemperatureChart
 } from "variables/charts";
 
+import {
+  user
+} from "variables/User";
+
 import dashboardStyle from "variables/styles/dashboardStyle";
 
 class Dashboard extends Component {
@@ -39,20 +43,6 @@ class Dashboard extends Component {
     daysUntilRefill : 4
     };
   }
-  componentDidMount() {
-    fetch('http://localhost:3100')
-      .then(response => {
-        if (response.ok) {
-          console.log(response)
-          return response.json();
-        } else {
-          throw new Error('Something went wrong ...');
-        }
-      })
-      .then(data => {
-        console.log(data)
-      })
-  }
   handleChange = (event, value) => {
     this.setState({ value });
   };
@@ -61,87 +51,24 @@ class Dashboard extends Component {
     this.setState({ value: index });
   };
   render() {
-    const { user } = this.props;
-    console.log(this.props.user);
     return (
       <div>
-        <Grid container>
-        <ItemGrid xs={12} sm={6} md={4}>
-            <StatsCard
-              icon={AddAlarm}
-              iconColor="green"
-              title="Pill schedule"
-              description={this.state.pillTime}
-              statIcon={DateRange}
-              statText="Everyday"
+        <Grid container alignItems="center">
+        <ItemGrid xs={12} sm={6} md={6}>
+            <RegularCard
+              cardTitle="Take your medication on time!"
+              cardSubtitle = "Help yourself never miss a medication"
+              content= "Smart Pills helps you keep your schedule on track"
+              headerColor= "blue"
+
             />
           </ItemGrid>
-          <ItemGrid xs={12} sm={6} md={4}>
-            <StatsCard
-              icon={InfoOutline}
-              iconColor="red"
-              title="Late to take medicine"
-              description={this.state.timesLate}
-              statIcon={LocalOffer}
-              statText="stats for this week"
-            />
-          </ItemGrid>
-          <ItemGrid xs={12} sm={6} md={4}>
-            <StatsCard
-              icon={Restore}
-              iconColor="orange"
-              title="Days until refill"
-              description={this.state.daysUntilRefill}
-              statIcon={Update}
-              statText="Updated today"
-            />
-          </ItemGrid>
-        </Grid>
-        <Grid container>
-          <ItemGrid xs={12} sm={12} md={6}>
-            <ChartCard
-              chart={
-                <ChartistGraph
-                  className="ct-chart"
-                  data={dailyPillChart.data}
-                  type="Line"
-                  options={dailyPillChart.options}
-                  listener={dailyPillChart.animation}
-                />
-              }
-              chartColor="green"
-              title="Daily Pill intake"
-              text={
-                <span>
-                  <span className={this.props.classes.successText}>
-                    <ArrowUpward
-                      className={this.props.classes.upArrowCardCategory}
-                    />{" "}
-                    50%
-                  </span>{" "}
-                  increase in this weeks pill intake.
-                </span>
-              }
-              statIcon={AccessTime}
-              statText="updated 4 minutes ago" //This will be done by substracting timestamp from when the view loads and when the data was updated
-            />
-          </ItemGrid>
-          <ItemGrid xs={12} sm={12} md={6}>
-            <ChartCard
-              chart={
-                <ChartistGraph
-                  className="ct-chart"
-                  data={bottleTemperatureChart.data}
-                  type="Line"
-                  options={bottleTemperatureChart.options}
-                  listener={bottleTemperatureChart.animation}
-                />
-              }
-              chartColor="red"
-              title="Bottle temperature"
-              text= "temperature should be under 25"
-              statIcon={AccessTime}
-              statText="temperature mesured 4 minutes ago"
+          <ItemGrid xs={12} sm={6} md={6}>
+            <RegularCard
+              cardTitle="Order your bottle today!"
+              cardSubtitle = "Smart pills bottles price starting from 29,99$"
+              content= "Currently out of stock"
+              headerColor= "green"
             />
           </ItemGrid>
         </Grid>

@@ -2,23 +2,22 @@ import DashboardPage from "views/Dashboard/Dashboard.jsx";
 import UserProfile from "views/UserProfile/UserProfile.jsx";
 import LoginPage from "views/Login/Login.jsx";
 import {appRoutes} from "routes/app.jsx";
-
 import {
   Dashboard,
-  Person
+  Person,
+  Kitchen
 } from "material-ui-icons";
-
-const sidebarItems = [
+var sidebarItems = [
   {
     type: "navigation",
-    route: appRoutes["dashboard"],
+    path: appRoutes["dashboard"].path,
     sidebarName: "Dashboard",
     navbarName: "Smart Pills Dashboard",
     icon: Dashboard,
   },
   {
     type: "navigation",
-    route: appRoutes["user"],
+    path: appRoutes["user"].path,
     sidebarName: "User Profile",
     navbarName: "Profile",
     icon: Person,
@@ -30,4 +29,42 @@ const sidebarItems = [
   },
 ];
 
-export default sidebarItems;
+function addBottleItems(bottles) {
+  console.log(bottles);
+  bottles.map((bottle,key) => {
+    var bottlePath = appRoutes["bottle"].path + "/" + bottle
+    var bottleItem = {
+      type:"navigation",
+      path:bottlePath,
+      sidebarName: bottle,
+      navbarName: "Bottle",
+      icon: Kitchen
+    }
+    sidebarItems.splice(2, 0, bottleItem);
+  })
+}
+
+function removeBottleItems(){
+  sidebarItems = [
+  {
+    type: "navigation",
+    path: appRoutes["dashboard"].path,
+    sidebarName: "Dashboard",
+    navbarName: "Smart Pills Dashboard",
+    icon: Dashboard,
+  },
+  {
+    type: "navigation",
+    path: appRoutes["user"].path,
+    sidebarName: "User Profile",
+    navbarName: "Profile",
+    icon: Person,
+  },
+  {
+    type: "action",
+    sidebarName: "Logout",
+    icon: Person,
+  },
+  ];
+}
+export {sidebarItems, addBottleItems,removeBottleItems} ; 

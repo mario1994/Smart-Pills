@@ -10,31 +10,51 @@ import {
   ItemGrid
 } from "components";
 
+import {
+  user
+} from "variables/User";
+
 import avatar from "assets/img/faces/profilePicturePlaceholder.png";
 
 class UserProfile extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-  	user:{
-  		firstName: 'Mario',
-  		lastName: 'Boban',
-  		email: 'mboban@fesb.hr',
-  		physician: 'Andria Dujmic',
-  		condition:'Steatohepatitis',
-  		city:'Split',
-  		country : 'Croatia',
-  		postalCode : 21000,
-  		dateOfBirth: 776995200000,
-  		pillBottleId: 1
-  	},
+  	 bottleId:""
     };
   }
- convertTimestampToDate = (timestamp) => {
-   var dateTime = new Date(timestamp);
-   var datestring = dateTime.getDate()  + "-" + (dateTime.getMonth()+1) + "-" + dateTime.getFullYear();
-   return datestring
+
+  registerBottle = (data) => {
+    fetch('http://localhost:3100/registerBottle',{
+        credentials: "same-origin",
+        method: 'post',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          bottle_id:this.state.bottleId,
+          user_id:user.id
+        })
+      })
+        .then(response => {
+          console.log(response)
+          return response.json()
+        })
+          .then(bottle => {
+            console.log(bottle)
+            if(bottle.bottle_id){
+                console.log(user.bottles)
+                user.bottles.push(bottle.bottle_id);
+                this.props.addNewBottle();
+                console.log(user.bottles)
+             }
+        })
+          .catch((error) => {
+          console.log(error)
+        })
+    }
+  onBottleIdChange = (event) => {
+    this.setState({bottleId: event.target.value})
   }
+
 render() {
   return (
     <div>
@@ -48,19 +68,11 @@ render() {
                 <Grid container>
                   <ItemGrid xs={12} sm={12} md={6}>
                     <CustomInput
-                      labelText={`Email : ${this.state.user.email}`}
+                      labelText={`Email : ${user.email}`}
                       id="email-address"
                       formControlProps={{
-                        fullWidth: true
-                      }}
-                    />
-                  </ItemGrid>
-                  <ItemGrid xs={12} sm={12} md={6}>
-                    <CustomInput
-                      labelText={`Physician : ${this.state.user.physician}`}
-                      id="physician"
-                      formControlProps={{
-                        fullWidth: true
+                        fullWidth: true,
+                        disabled: true
                       }}
                     />
                   </ItemGrid>
@@ -68,63 +80,46 @@ render() {
                 <Grid container>
                   <ItemGrid xs={12} sm={12} md={6}>
                     <CustomInput
-                      labelText={`First-name : ${this.state.user.firstName}`}
+                      labelText={`First-name : ${user.firstName}`}
                       id="first-name"
                       formControlProps={{
-                        fullWidth: true
+                        fullWidth: true,
+                        disabled: true
                       }}
                     />
                   </ItemGrid>
                   <ItemGrid xs={12} sm={12} md={6}>
                     <CustomInput
-                      labelText={`Last-name : ${this.state.user.lastName}`}
+                      labelText={`Last-name : ${user.lastName}`}
                       id="last-name"
                       formControlProps={{
-                        fullWidth: true
-                      }}
-                    />
-                  </ItemGrid>
-                </Grid>
-                <Grid container>
-                  <ItemGrid xs={12} sm={12} md={4}>
-                    <CustomInput
-                      labelText={`City : ${this.state.user.city}`}
-                      id="city"
-                      formControlProps={{
-                        fullWidth: true
-                      }}
-                    />
-                  </ItemGrid>
-                  <ItemGrid xs={12} sm={12} md={4}>
-                    <CustomInput
-                      labelText={`Country : ${this.state.user.country}`}
-                      id="country"
-                      formControlProps={{
-                        fullWidth: true
-                      }}
-                    />
-                  </ItemGrid>
-                  <ItemGrid xs={12} sm={12} md={4}>
-                    <CustomInput
-                      labelText={`Postal-code : ${this.state.user.postalCode}`}
-                      id="postal-code"
-                      formControlProps={{
-                        fullWidth: true
+                        fullWidth: true,
+                        disabled: true
                       }}
                     />
                   </ItemGrid>
                 </Grid>
               </div>
             }
-            footer={<Button color="primary">Update Profile</Button>}
+            footer={
+              <div>
+              <Button onClick={this.registerBottle} color="primary" >Link Bottle</Button>
+                <input 
+                className="pa2 ml3 input-reset ba bg-transparent hover-bg-white hover-black w-75"
+                type="bottleId" 
+                name="bottleId"  
+                id="bottleId"
+                onChange = {this.onBottleIdChange}
+                />
+              </div>
+            }
           />
         </ItemGrid>
         <ItemGrid xs={12} sm={12} md={4}>
           <ProfileCard
             avatar={avatar}
-            subtitle={this.state.user.condition}
-            title={`${this.state.user.firstName} ${this.state.user.lastName}`}
-            description={`Date of Birth: ${this.convertTimestampToDate(this.state.user.dateOfBirth)}`}
+            title={`${user.firstName} ${user.lastName}`}
+            description={`Date of Birth: ${(user.dateOfBirth.split('T')[0])}`}
           />
         </ItemGrid>
       </Grid>
@@ -133,7 +128,7 @@ render() {
 }
 }
 UserProfile.propTypes = {
-  classes: PropTypes.object.isRequired
+  
 };
 
 export default UserProfile;

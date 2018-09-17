@@ -3,6 +3,13 @@ import { CountryDropdown } from 'react-country-region-selector';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
+import Alert from 'react-s-alert';
+
+import {TextField} from "material-ui";
+
+import {
+  Button,
+} from "components";
 
 class Register extends React.Component {
   constructor(props) {
@@ -13,25 +20,19 @@ class Register extends React.Component {
       firstName: '',
       lastName: '',
       dateOfBirth: undefined,
-      city:'',
-      country:'',
-      postalCode:'',
       password: '',
       confirmPassword:'',
       emailIsValid: false,
       firstNameIsValid: false,
       lastNameIsValid: false,
       dateOfBirthIsValid: false,
-      cityIsValid: false,
-      countryIsValid: false,
-      postalCodeIsValid: false,
       passwordIsValid: false,
       confirmPasswordIsValid: false,
     }
   }
 
   checkPassword = (str) => {
-    const re = new RegExp("^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,32}$");
+    const re = new RegExp("^(?=.*[a-z])(?=.*[A-Z]).{8,32}$");
     return re.test(str);
   }
 
@@ -54,25 +55,6 @@ class Register extends React.Component {
     this.setState({ dateOfBirth: day });
   }
 
-   onCityChange = (event) => {
-    if(event.target.value != ""){
-      this.setState({cityIsValid: true})
-    }
-    this.setState({city: event.target.value})
-  }
-
-  selectCountry (val) {
-    this.setState({countryIsValid: true})
-    this.setState({ country: val });
-  }
-
-   onPostalCodeChange = (event) => {
-    if(event.target.value != ""){
-      this.setState({postalCodeIsValid: true})
-    }
-    this.setState({postalCode: event.target.value})
-  }
-
   onEmailChange = (event) => {
     if(event.target.validity.valid == true){
       this.setState({emailIsValid: true})
@@ -81,21 +63,20 @@ class Register extends React.Component {
   }
 
   onPasswordChange = (event) => {
-    if(event.target.validity.valid == true && this.checkPassword(event.target.value)){
+    if(this.checkPassword(event.target.value)){
       this.setState({passwordIsValid: true})
     }
     this.setState({password: event.target.value})
   }
   onConfirmPasswordChange = (event) => {
-    if(this.confirmPassword == this.password && this.passwordIsValid){
+    if(event.target.value == this.state.password && this.state.passwordIsValid){
       this.setState({confirmPasswordIsValid: true})
     }
-    this.setState({password: event.target.value})
+    this.setState({confirmPassword: event.target.value})
   }
 
   onSubmitSignUp = () => {
-    const {emailIsValid,confirmPasswordIsValid,firstNameIsValid,lastNameIsValid,cityIsValid,countryIsValid,dateOfBirthIsValid,postalCodeIsValid} = this.state;
-    if(emailIsValid && confirmPasswordIsValid && firstNameIsValid && lastNameIsValid && cityIsValid && countryIsValid && dateOfBirthIsValid && postalCodeIsValid){
+    const {emailIsValid,confirmPasswordIsValid,firstNameIsValid,lastNameIsValid,dateOfBirthIsValid} = this.state;
       fetch('http://localhost:3100/signup', {
         method: 'post',
         headers: {'Content-Type': 'application/json'},
@@ -104,9 +85,7 @@ class Register extends React.Component {
           password: this.state.password,
           first_name: this.state.firstName,
           last_name: this.state.lastName,
-          city: this.state.city,
-          country: this.state.country,
-          postal_code: this.state.postalCode
+          date_of_birth: this.state.dateOfBirth,
         })
       })
         .then(response => {
@@ -119,62 +98,57 @@ class Register extends React.Component {
             })
           }
           else if(response.status == 404){
-            var response = response.json()
-            return new Promise((resolve, reject) => {
-              reject({"error":"invalid user registration data sent"});
+            console.log(response.json());
+            Alert.error("", {
+            position: 'top-right',
+            effect:"jelly",
+            timeout: 2000,
+            offset: 100
             })
           }
         })
         .then(user => {
           if (user) {
-            console.log(user);
             this.props.loadUser(user);
           }
         })
-        .catch(err => {
-        console.log(err);
-      })
-      }
   }
 
   render() {
     const { dateOfBirth } = this.state;
     return (
-      <article className="br3 ba b--black-10 mw6 shadow-5 center">
+      <article className="br3 ba b--black-10 mw6 shadow-5 center mt3 mb3">
         <main className="pa4 black-80">
           <div className="measure center">
             <fieldset id="sign_up" className="ba b--transparent ph0 mh0 tc">
               <legend className="f1 fw6 ph0 mh0">Register</legend>
               <div className="mt0">
                 <label className="db fw6 lh-copy f5 black" htmlFor="email-address">Email</label>
-                <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-white hover-black w-75"
+                <TextField
+                  className=""
                   type="email"
                   name="email-address"
                   id="email-address"
-                  required
                   onChange={this.onEmailChange}
                 />
               </div>
               <div className="mt3">
                 <label className="db fw6 lh-copy f5 black" htmlFor="firstName">First Name</label>
-                <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-white hover-black w-75"
+                <TextField
+                  className=""
                   type="firstName"
                   name="firstName"
                   id="firstName"
-                  required
                   onChange={this.onFirstNameChange}
                 />
               </div>
               <div className="mt3">
                 <label className="db fw6 lh-copy f5 black" htmlFor="lastName">Last Name</label>
-                <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-white hover-black w-75"
+                <TextField
+                  className=""
                   type="lastName"
                   name="lastName"
                   id="lastName"
-                  required
                   onChange={this.onLastNameChange}
                 />
             </div>
@@ -193,71 +167,46 @@ class Register extends React.Component {
               />
             </div>
               </div>
-               <div className="mt3">
-                <label className="db fw6 lh-copy f5 black" htmlFor="city">City</label>
-                <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-white hover-black w-75"
-                  type="city"
-                  name="city"
-                  id="city"
-                  required
-                  onChange={this.onCityChange}
-                />
-              </div>
-              <div className="mt3">
-                <label className="db fw6 lh-copy f5 black" htmlFor="country">Country</label>
-                <CountryDropdown
-                value={this.state.country}
-                onChange={(val) => this.selectCountry(val)} />
-              </div>
-              <div className="mt3">
-                <label className="db fw6 lh-copy f5 black" htmlFor="postalCode">Postal Code</label>
-                <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-white hover-black w-75"
-                  type="postalCode"
-                  name="postalCode"
-                  id="postalCode"
-                  required
-                  onChange={this.onPostalCodeChange}
-                />
-              </div>
               <div className="mv3">
                 <label className="db fw6 lh-copy f5 black" htmlFor="password">Password</label>
-                <label className="db fw6 lh-copy f9" htmlFor="password">Password must contain at least 6 characters, including UPPER/lowercase and numbers</label>
-                <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-white hover-black w-75"
+                <label className="db fw6 lh-copy f9 black" htmlFor="password">Password must contain at least 8 characters, including UPPER/lowercase and numbers</label>
+                <TextField
+                  className=""
                   type="password"
                   name="password"
                   id="password"
-                  required
                   onChange={this.onPasswordChange}
                 />
               </div>
               <div className="mv3">
                 <label className="db fw6 lh-copy f5 black" htmlFor="password">Confirm Password</label>
-                <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-white hover-black w-75"
+                <TextField
+                  className=""
                   type="password"
                   name="confirm-password"
                   id="confirm-password"
-                  required
                   onChange={this.onConfirmPasswordChange}
                 />
               </div>
             </fieldset>
             <div className="tc">
-              <input
+              <Button
                 onClick={this.onSubmitSignUp}
-                className="center pv2 input-reset ba b--black bg-transparent grow pointer f6 dib w-50"
+                className=""
+                color="primary"
                 type="submit"
                 value="Register"
-              />
+                >
+                Register
+              </Button>
             </div>
               <div className="lh-copy mt1 tc">
-              <p 
+              <Button 
              onClick={() => this.props.onRouteChange('signin')}
-             href="#0" 
-             className="f4 link dim black db">Sign in</p>
+             color="primary"
+             className="">
+             Sign in
+             </Button>
             </div>
           </div>
         </main>

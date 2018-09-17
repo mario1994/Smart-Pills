@@ -12,7 +12,6 @@ import {
   ListItemText
 } from "material-ui";
 
-
 import sidebarStyle from "variables/styles/sidebarStyle.jsx";
 
 const Sidebar = ({ ...props }) => {
@@ -33,7 +32,7 @@ const Sidebar = ({ ...props }) => {
         });
         return (
           <NavLink
-            to={prop.route.path}
+            to={prop.path}
             className={classes.item}
             activeClassName="active"
             key={key}
@@ -68,7 +67,7 @@ const Sidebar = ({ ...props }) => {
   );
   var brand = (
     <div className={classes.logo}>
-      <a href="https://www.creative-tim.com" className={classes.logoLink}>
+      <a className={classes.logoLink}>
         <div className={classes.logoImage}>
           <img src={logo} alt="logo" className={classes.img} />
         </div>

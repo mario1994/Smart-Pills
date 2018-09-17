@@ -79,7 +79,7 @@ const bottleTemperatureChart = {
       tension: 0
     }),
     low: 10,
-    high: 30, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+    high: 40, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
     chartPadding: {
       top: 0,
       right: 0,

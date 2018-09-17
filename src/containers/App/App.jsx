@@ -1,9 +1,10 @@
-import React from "react";
+import React, { Component }  from "react";
 import PropTypes from "prop-types";
 import Navigation from 'components/Navigation/Navigation';
 import LoginPage from "views/Login/Login.jsx";
 import RegisterPage from "views/Register/Register.jsx";
 import DashboardPage from "views/Dashboard/Dashboard.jsx";
+import BottlePage from "views/Bottle/Bottle.jsx";
 import UserProfile from "views/UserProfile/UserProfile.jsx";
 import { Switch, Route, Redirect } from "react-router-dom";
 // creates a beautiful scrollbar
@@ -12,14 +13,34 @@ import "perfect-scrollbar/css/perfect-scrollbar.css";
 import { withStyles } from "material-ui";
 
 import { Header, Footer, Sidebar } from "components";
-
-import sidebarItems from "sidebarItems/sidebarItems.jsx";
 import {appRoutes, redirects} from "routes/app.jsx";
 
 import appStyle from "variables/styles/appStyle.jsx";
 
 import image from "assets/img/sidebar-3.jpg";
 import logo from "assets/img/pillslogo.jpg";
+
+import Alert from 'react-s-alert';
+import 'react-s-alert/dist/s-alert-default.css';
+import 'react-s-alert/dist/s-alert-css-effects/slide.css';
+import 'react-s-alert/dist/s-alert-css-effects/scale.css';
+import 'react-s-alert/dist/s-alert-css-effects/bouncyflip.css';
+import 'react-s-alert/dist/s-alert-css-effects/flip.css';
+import 'react-s-alert/dist/s-alert-css-effects/genie.css';
+import 'react-s-alert/dist/s-alert-css-effects/jelly.css';
+import 'react-s-alert/dist/s-alert-css-effects/stackslide.css';
+
+import {
+  user,
+  setUser,
+  logoutUser
+} from "variables/User";
+
+import {
+  sidebarItems,
+  addBottleItems,
+  removeBottleItems
+}  from "sidebarItems/sidebarItems.jsx";
 
 const switchRoutes = (
   <Switch>
@@ -33,47 +54,51 @@ const switchRoutes = (
   </Switch>
 );
 
-class App extends React.Component {
-  state = {
-    user:{
-      firstName:"",
-      lastName:"",
-      email:"",
-      dateOfBirth:"",
-      city:"",
-      country:"",
-      postalCode:"",
-    },
-    mobileOpen: false,
-    route: 'loggedIn',
-  };
+class App extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      mobileOpen: false,
+      route: 'signin',
+    };
+    if(localStorage.getItem("user") != null){
+       var storedUser = JSON.parse(localStorage.getItem("user"))
+       setUser(storedUser);
+       addBottleItems(storedUser.bottles);
+       this.state.route = 'loggedIn';
+    }
+   }
+  
 
   handleDrawerToggle = () => {
     this.setState({ mobileOpen: !this.state.mobileOpen });
   };
 
   loadUser = (data) => {
+    setUser(data);
+    addBottleItems(user.bottles);
+    localStorage.setItem("user", JSON.stringify (data));
     this.setState({route: 'loggedIn'});
-    console.log(this.state.user);
+  }
+
+  addNewBottle = () =>{
+    removeBottleItems();
+    addBottleItems(user.bottles);
+    var storedUser = JSON.parse(localStorage.getItem("user"))
+    storedUser.bottles = user.bottles;
+    localStorage.setItem("user", JSON.stringify (storedUser));
+    this.setState({route: 'loggedIn'});
   }
   onRouteChange = (route) => {
     this.setState({route: route});
   }
   signOutUser = () =>{
-    this.setState({user:{
-      firstName:"",
-      lastName:"",
-      email:"",
-      dateOfBirth:"",
-      city:"",
-      country:"",
-      postalCode:"",
-    }});
-    this.setState({route: "signin"});
+    logoutUser();
+    removeBottleItems();
+    localStorage.clear()
+    this.setState({route: "signin"})
   }
-  getRoute() {
-    return this.props.location.pathname !== "/maps";
-  }
+
   componentDidMount() {
     if(navigator.platform.indexOf('Win') > -1){
       // eslint-disable-next-line
@@ -81,6 +106,7 @@ class App extends React.Component {
     }
   }
   render() {
+
     const { classes, ...rest } = this.props;
     if(this.state.route === 'loggedIn'){
     return (
@@ -102,51 +128,52 @@ class App extends React.Component {
               handleDrawerToggle={this.handleDrawerToggle}
               {...rest}
             />
-            {/* On the /maps route we want the map to be on full screen - this is not possible if the content and conatiner classes are present because they have some paddings which would make the map smaller */}
-            {this.getRoute() ? (
-              <div className={classes.content}
-              >
-                <div 
-                className={classes.container}
-                >
+            {
+              <div className={classes.content}>
+                <div className={classes.container}>
                 <Switch>
                     { Object.keys(appRoutes).map((key) => {
                       var route = appRoutes[key]
+                      
                       if(key == "dashboard"){
                          return <Route 
                          path={route.path} 
-                         render={(props) => <DashboardPage {...props} user={this.state.user}/>} 
+                         render={(props) => <DashboardPage {...props}/>} 
                          key={key} />;
                       }else if (key == "user"){
                         return <Route 
                         path={route.path}
-                        render={(props) => <UserProfile {...props} user={this.state.user}/>}
+                        render={(props) => <UserProfile {...props} addNewBottle={this.addNewBottle} />}
                         key={key} />;
+                      }else if (key == "bottle"){
+                        var bottleRoute = route.path + "/:id"
+                        return <Route 
+                        path= {bottleRoute}
+                        render={(props) => <BottlePage {...props} bottleId={user.bottles}/>}
+                        key={key} />;
+                       }
                       }
-                    })}
-                    {redirects.map((prop, key) => {
-                        return <Redirect from={prop.path} to={prop.to} key={key} />;
-                    })}
+                    )}
                 </Switch>
                 </div>
               </div>
-            ) : (
-              <div className={classes.map}>{switchRoutes}</div>
-            )}
-            {this.getRoute() ? <Footer /> : null}
+            }
           </div>
+            <Alert stack={{limit: 3}} />
         </div>
       );
     }else if(this.state.route === 'signin'){
       return(
         <div>
           <LoginPage loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
+          <Alert stack={{limit: 3}} />
         </div>
         );
     }else if(this.state.route === 'register'){
       return(
       <div>
         <RegisterPage loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
+        <Alert stack={{limit: 3}} />
       </div>
         );
     }
