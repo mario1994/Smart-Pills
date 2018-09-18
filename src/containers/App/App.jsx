@@ -15,6 +15,10 @@ import { withStyles } from "material-ui";
 import { Header, Footer, Sidebar } from "components";
 import {appRoutes, redirects} from "routes/app.jsx";
 
+import {
+  withRouter
+} from 'react-router-dom'
+
 import appStyle from "variables/styles/appStyle.jsx";
 
 import image from "assets/img/sidebar-3.jpg";

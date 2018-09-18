@@ -5,6 +5,10 @@ import {
   Button,
 } from "components";
 
+import {
+  withRouter
+} from 'react-router-dom'
+
 import {TextField} from "material-ui";
 import './Login.css';
 
@@ -47,15 +51,34 @@ class Login extends Component {
 				})
 			})
 				.then(response => {
-					console.log(response.headers.get('set-cookie'));
-					return response.json()
-				})
-
+					if(response.status == 200){
+		            return response.json()
+		          }
+		          else if(response.status == 204){
+		            return new Promise((resolve, reject) => {
+		              reject("incomplete form sent");
+		            })
+		          }
+		          else if(response.status == 404){
+		             return new Promise((resolve, reject) => {
+		              reject("invalid login data sent");
+		            })
+		          }
+		        })
 	    		.then(user => {
 	       		if(user.id){
 	          		this.props.loadUser(user);
+	          		this.props.history.push('/dashboard')
 	       		 }
 	      })
+	    	.catch(error =>{
+            Alert.error(error, {
+            position: 'top-right',
+            effect:"jelly",
+            timeout: 2000,
+            offset: 100
+        });
+        })
 	    }else{
 	    	Alert.error('email or password not entered', {
             position: 'top-right',
@@ -65,7 +88,6 @@ class Login extends Component {
         });
 	    }
 	}
-
 	render(){
 		const { onRouteChange } = this.props;
 		return(
@@ -116,4 +138,4 @@ class Login extends Component {
 	);
 	}
 }
-export default Login;
+export default withRouter(Login);

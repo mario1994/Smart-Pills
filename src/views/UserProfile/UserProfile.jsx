@@ -20,7 +20,8 @@ class UserProfile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-  	 bottleId:""
+  	 bottleId:"",
+     validInput:false
     };
   }
 
@@ -52,6 +53,11 @@ class UserProfile extends Component {
         })
     }
   onBottleIdChange = (event) => {
+    if(event.target.value.length == 16){
+      this.setState({validInput: true})
+    }else{
+      this.setState({validInput: false})
+    }
     this.setState({bottleId: event.target.value})
   }
 
@@ -103,7 +109,7 @@ render() {
             }
             footer={
               <div>
-              <Button onClick={this.registerBottle} color="primary" >Link Bottle</Button>
+              <Button disabled={!this.state.validInput} onClick={this.registerBottle} color="primary" >Link Bottle</Button>
                 <input 
                 className="pa2 ml3 input-reset ba bg-transparent hover-bg-white hover-black w-75"
                 type="bottleId" 

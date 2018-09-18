@@ -3,6 +3,23 @@ import PropTypes from "prop-types";
 import { Grid, InputLabel } from "material-ui";
 import ScheduleModal from "components/Modal/SimpleModal.jsx"
 import ChartistGraph from "react-chartist";
+import Alert from 'react-s-alert';
+import {
+  withRouter
+} from 'react-router-dom'
+
+import {
+  user,
+  setUser,
+  logoutUser
+} from "variables/User";
+
+import {
+  sidebarItems,
+  addBottleItems,
+  removeBottleItems
+}  from "sidebarItems/sidebarItems.jsx";
+
 import {
   StatsCard,
   RegularCard,
@@ -22,10 +39,6 @@ import {
 import {
   bottleTemperatureChart
 } from "variables/charts";
-
-import {
-  user
-} from "variables/User";
 
 import avatar from "assets/img/faces/profilePicturePlaceholder.png";
 
@@ -80,11 +93,50 @@ class Bottle extends Component {
     this.setState({ show: false});
   };
 
+  unlinkBottle = () => {
+    var bottleId = this.state.scheduleData.bottleId;
+    var url = 'http://localhost:3100/deleteBottle/' + bottleId;
+    fetch(url,{
+        credentials: "same-origin",
+        method: 'delete',
+        headers: {'Content-Type':'application/json'},
+      })
+        .then(response => {
+          if(response.status == 200){
+                return response.json()
+              }
+          else if(response.status == 404){
+                 return new Promise((resolve, reject) => {
+                  reject("failed to delete bottle");
+                })
+              }
+        })
+        .then(() => {
+                var index = user.bottles.indexOf(bottleId);
+                if (index > -1) {
+                  user.bottles.splice(index, 1);
+                }
+                var storedUser = JSON.parse(localStorage.getItem("user"))
+                storedUser.bottles = user.bottles;
+                localStorage.setItem("user", JSON.stringify (storedUser));
+                removeBottleItems();
+                addBottleItems(user.bottles);
+                this.props.history.push('/dashboard')
+             }
+        )
+          .catch((error) => {
+          Alert.error(error, {
+            position: 'top-right',
+            effect:"jelly",
+            timeout: 2000,
+            offset: 100
+        });
+        })
+  };
+
   updateTime = (time) => {
     var scheduleData = this.state.scheduleData
     scheduleData.scheduleTime = time
-    console.log("updateTime callde in Bottle.jsx");
-    console.log(time);
     this.setState({scheduleData});
   }
 
@@ -138,7 +190,6 @@ class Bottle extends Component {
              }
         )
           .catch((error) => {
-          console.log(error)
         })
   }
 
@@ -157,7 +208,6 @@ class Bottle extends Component {
              }
         )
           .catch((error) => {
-          console.log(error)
         })
   }
 
@@ -181,7 +231,6 @@ class Bottle extends Component {
              }
         })
           .catch((error) => {
-          console.log(error)
         })
     }
 
@@ -250,7 +299,7 @@ render() {
                 container
                 justify="space-between">
                 <Button onClick={this.showModal} color="primary" >Show Schedule</Button>
-                <Button onClick={this.showModal} color="primary" >Unlink Bottle</Button>
+                <Button onClick={this.unlinkBottle} color="primary" >Unlink Bottle</Button>
                 </Grid>
               </div>
         }
@@ -265,4 +314,4 @@ Bottle.propTypes = {
   
 };
 
-export default Bottle;
+export default withRouter(Bottle);

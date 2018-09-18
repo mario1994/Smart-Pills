@@ -8,6 +8,10 @@ import Alert from 'react-s-alert';
 import {TextField} from "material-ui";
 
 import {
+  withRouter
+} from 'react-router-dom'
+
+import {
   Button,
 } from "components";
 
@@ -94,23 +98,28 @@ class Register extends React.Component {
           }
           else if(response.status == 204){
             return new Promise((resolve, reject) => {
-              reject({"error":"incomplete form sent"});
+              reject("incomplete form sent");
             })
           }
           else if(response.status == 404){
-            console.log(response.json());
-            Alert.error("", {
-            position: 'top-right',
-            effect:"jelly",
-            timeout: 2000,
-            offset: 100
+             return new Promise((resolve, reject) => {
+              reject("invalid user registration data sent");
             })
           }
         })
         .then(user => {
           if (user) {
             this.props.loadUser(user);
+            this.props.history.push('/dashboard')
           }
+        })
+        .catch(error =>{
+            Alert.error(error, {
+            position: 'top-right',
+            effect:"jelly",
+            timeout: 2000,
+            offset: 100
+        });
         })
   }
 
@@ -215,4 +224,4 @@ class Register extends React.Component {
   }
 }
 
-export default Register;
+export default withRouter(Register);

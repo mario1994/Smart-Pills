@@ -30,7 +30,6 @@ var sidebarItems = [
 ];
 
 function addBottleItems(bottles) {
-  console.log(bottles);
   bottles.map((bottle,key) => {
     var bottlePath = appRoutes["bottle"].path + "/" + bottle
     var bottleItem = {
